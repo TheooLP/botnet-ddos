@@ -1,2 +1,2 @@
 # botnet-ddos
-Repository for SR2I208 project.
+Repository for the SR2I208 project.
