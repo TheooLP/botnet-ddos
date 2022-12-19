@@ -62,10 +62,45 @@ def TCP_SYN(target_ip, target_port, src_ip):
     print('IP_HEADER:\n\t', binascii.hexlify(IP_HEADER))
 
     # Creating the TCP header
+    src_port = random.randint(49152, 65535)     # 2 octets
+    dst_port = target_port                      # 2 octets
+    seq_num = 0                                 # 4 octets
+    ack_num = 0                                 # 4 octets
+    data_offset = 5                             # 4 bits
+    reserved = 0                                # 6 bits
+    flags = 2                                   # 6 bits (SYN)
+    window = 5840                               # 2 octets
+    checksum = 0                                # 2 octets
+    urgent_pointer = 0                          # 2 octets
 
+    # Concatenate data_offset, reserved and flags to have a 2 octets field
+    data_offset_reserved_flags = (data_offset << 12) + (reserved << 6) + flags
+
+    tcp_head_no_check = struct.pack('!HHLLHHHH', src_port, dst_port, seq_num, ack_num, data_offset_reserved_flags, window, checksum, urgent_pointer)
+
+    # Pseudo header for TCP checksum calculation
+    src_addr = socket.inet_aton(src_ip)
+    dst_addr = socket.inet_aton(target_ip)
+    placeholder = 0
+    protocol = socket.IPPROTO_TCP
+    tcp_length = len(tcp_head_no_check)
+
+    psh = struct.pack('!4s4sBBH', src_addr, dst_addr, placeholder, protocol, tcp_length)
+    psh = psh + tcp_head_no_check
+
+    checksum = calculate_checksum(psh)
+
+    TCP_HEADER = struct.pack('!HHLLHHHH', src_port, dst_port, seq_num, ack_num, data_offset_reserved_flags, window, checksum, urgent_pointer)
+    print('TCP_HEADER:\n\t', binascii.hexlify(TCP_HEADER))
+
+    # Creating the packet
+    packet = IP_HEADER + TCP_HEADER
+
+    # Printing the packet
+    print('Packet:\n\t', binascii.hexlify(packet))
 
     # Returning the entire packet
-    #return packet
+    return packet
 
 
 # Main function
