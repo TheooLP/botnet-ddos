@@ -17,7 +17,10 @@ import binascii
 
 # Generates an IP address in the format "x.x.x.x" with x a random number between 0 and 255
 def generate_random_ip() -> str:
-  return ".".join([str(random.randint(0, 255)) for _ in range(4)])
+    while 1:
+        ip = ".".join([str(random.randint(0, 255)) for _ in range(4)])
+        if not ip.startswith('127.'):
+            return ip
 
 
 def calculate_checksum(message: bytes) -> int:
